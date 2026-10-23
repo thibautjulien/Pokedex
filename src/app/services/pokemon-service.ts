@@ -1,5 +1,5 @@
-import { Injectable, inject } from '@angular/core';
-import { Pokemon, PokemonInfo } from '../models/pokemon';
+import { Injectable, inject, signal } from '@angular/core';
+import { Pokemon, PokemonInfo, PokemonPage } from '../models/pokemon';
 import { PokeApiListItem, PokeApiListResponse, PokeApiPokemonDetail } from '../models/pokeapi';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
@@ -9,17 +9,29 @@ import { Observable, map } from 'rxjs';
 })
 export class PokemonService {
   private http = inject(HttpClient);
+  public readonly page = signal(1);
 
-  getPokemons(offset: number): Observable<Pokemon[]> {
+  getPokemons(offset: number): Observable<PokemonPage> {
     return this.http
       .get<PokeApiListResponse>(`https://pokeapi.co/api/v2/pokemon?limit=20&offset=${offset}`)
-      .pipe(map((response) => response.results.map((item) => this.toPokemon(item))));
+      .pipe(
+        map((response) => ({
+          pokemons: response.results.map((item) => this.toPokemon(item)),
+          total: response.count,
+        })),
+      );
   }
 
   getPokemonInfo(id: string): Observable<PokemonInfo> {
     return this.http
       .get<PokeApiPokemonDetail>(`https://pokeapi.co/api/v2/pokemon/${id}`)
       .pipe(map((detail) => this.toPokemonInfo(detail)));
+  }
+
+  getAllPokemons(): Observable<Pokemon[]> {
+    return this.http
+      .get<PokeApiListResponse>(`https://pokeapi.co/api/v2/pokemon?limit=2000`)
+      .pipe(map((response) => response.results.map((item) => this.toPokemon(item))));
   }
 
   private toPokemon(item: PokeApiListItem): Pokemon {

@@ -1,23 +1,45 @@
 <section class="max-w-6xl mx-auto p-6">
-  <div class="flex items-center justify-center gap-4 mb-6">
-    <button
-      class="px-4 py-2 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600 disabled:opacity-40 disabled:cursor-not-allowed"
-      (click)="precedent()"
-      [disabled]="page() === 1"
-    >
-      Précédent
-    </button>
-    <span> Page {{ page() }} </span>
-    <button
-      class="px-4 py-2 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600 disabled:opacity-40 disabled:cursor-not-allowed"
-      (click)="suivant()"
-    >
-      Suivant
-    </button>
-  </div>
-  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-    @for (p of pokemons(); track p.id) {
-      <app-pokemon-card [pokemon]="p" />
-    }
-  </div>
+  <!-- Champ de recherche -->
+  <input
+    class="w-full px-4 py-3 mb-6 rounded-xl border border-gray-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400"
+    [(ngModel)]="recherche"
+    placeholder="Rechercher un pokémon.."
+  />
+
+  @if (recherche().trim()) {
+    <p class="text-sm text-gray-400 mb-4">{{ resultats().length }} Pokémon trouvé(s)</p>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      @for (p of resultats(); track p.id) {
+        <app-pokemon-card [pokemon]="p" />
+      } @empty {
+        <p class="col-span-full text-center text-gray-400 py-12">Aucun Pokémon trouvé.</p>
+      }
+    </div>
+  } @else {
+    <section class="max-w-6xl mx-auto p-6">
+      <div class="flex items-center justify-center gap-4 mb-6">
+        <button
+          class="px-4 py-2 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600 disabled:opacity-40 disabled:cursor-not-allowed"
+          (click)="precedent()"
+          [disabled]="page() === 1"
+        >
+          Précédent
+        </button>
+        <span> Page {{ page() }} / {{ totalPages() }} </span>
+        <button
+          class="px-4 py-2 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600 disabled:opacity-40 disabled:cursor-not-allowed"
+          (click)="suivant()"
+          [disabled]="page() === totalPages()"
+        >
+          Suivant
+        </button>
+      </div>
+      <p>{{ tousLesPokemons().length }} Pokémon chargés pour la recherche</p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        @for (p of pokemons(); track p.id) {
+          <app-pokemon-card [pokemon]="p" />
+        }
+      </div>
+    </section>
+  }
 </section>

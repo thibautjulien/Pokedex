@@ -20,3 +20,8 @@ export interface PokemonInfo {
     weight: number;
     stats: PokemonStat[];
 }
+
+export interface PokemonPage {
+  pokemons: Pokemon[];
+  total: number;
+}
