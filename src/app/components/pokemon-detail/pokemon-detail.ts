@@ -2,6 +2,7 @@ import { Component, input, signal, inject, OnInit } from '@angular/core';
 import { PokemonService } from '../../services/pokemon-service';
 import { PokemonInfo } from '../../models/pokemon';
 import { RouterLink } from '@angular/router';
+import { TYPE_COLORS } from '../../models/type-colors';
 
 @Component({
   selector: 'app-pokemon-detail',
