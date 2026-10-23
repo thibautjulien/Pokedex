@@ -11,10 +11,26 @@ import { PokemonCard } from '../pokemon-card/pokemon-card';
 })
 export class PokemonList implements OnInit {
   private pokemonsService = inject(PokemonService);
+  protected readonly page = signal(1);
 
   protected readonly pokemons = signal<Pokemon[]>([]);
 
   ngOnInit(): void {
-    this.pokemonsService.getPokemons().subscribe((data) => this.pokemons.set(data));
+    this.charger();
+  }
+
+  suivant(): void {
+    this.page.update((p) => p + 1);
+    this.charger();
+  }
+
+  precedent(): void {
+    this.page.update((p) => p - 1);
+    this.charger();
+  }
+
+  private charger(): void {
+    const offset = (this.page() - 1) * 20;
+    this.pokemonsService.getPokemons(offset).subscribe((data) => this.pokemons.set(data));
   }
 }

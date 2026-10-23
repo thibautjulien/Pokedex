@@ -10,9 +10,9 @@ import { Observable, map } from 'rxjs';
 export class PokemonService {
   private http = inject(HttpClient);
 
-  getPokemons(): Observable<Pokemon[]> {
+  getPokemons(offset: number): Observable<Pokemon[]> {
     return this.http
-      .get<PokeApiListResponse>('https://pokeapi.co/api/v2/pokemon?limit=20')
+      .get<PokeApiListResponse>(`https://pokeapi.co/api/v2/pokemon?limit=20&offset=${offset}`)
       .pipe(map((response) => response.results.map((item) => this.toPokemon(item))));
   }
 
