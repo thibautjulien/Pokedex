@@ -16,8 +16,20 @@ export class PokemonDetail implements OnInit {
   private pokemonService = inject(PokemonService);
 
   protected readonly pokemon = signal<PokemonInfo | null>(null);
+  protected readonly erreur = signal<string | null>(null);
 
   ngOnInit(): void {
-    this.pokemonService.getPokemonInfo(this.id()).subscribe((detail) => this.pokemon.set(detail));
+    this.pokemonService.getPokemonInfo(this.id()).subscribe({
+      next: (detail) => {
+        this.pokemon.set(detail);
+      },
+      error: () => {
+        this.erreur.set('Ce pokémon est introuvable.');
+      },
+    });
+  }
+
+  couleurType(type: string): string {
+    return TYPE_COLORS[type] ?? 'bg-gray-400';
   }
 }

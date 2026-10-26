@@ -7,7 +7,6 @@
   />
 
   @if (recherche().trim()) {
-    <p class="text-sm text-gray-400 mb-4">{{ resultats().length }} Pokémon trouvé(s)</p>
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
       @for (p of resultats(); track p.id) {
         <app-pokemon-card [pokemon]="p" />
@@ -16,7 +15,12 @@
       }
     </div>
   } @else {
-    <section class="max-w-6xl mx-auto p-6">
+    @if (erreur()) {
+      <div class="bg-white rounded-2xl shadow-lg p-12 text-center">
+        <p class="text-5xl mb-4">😵</p>
+        <p class="text-xl font-semibold text-gray-700">{{ erreur() }}</p>
+      </div>
+    } @else {
       <div class="flex items-center justify-center gap-4 mb-6">
         <button
           class="px-4 py-2 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600 disabled:opacity-40 disabled:cursor-not-allowed"
@@ -40,6 +44,6 @@
           <app-pokemon-card [pokemon]="p" />
         }
       </div>
-    </section>
+    }
   }
 </section>

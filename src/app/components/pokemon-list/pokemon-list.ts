@@ -19,6 +19,7 @@ export class PokemonList implements OnInit {
   protected readonly totalPages = computed(() => Math.ceil(this.total() / 20));
   protected readonly tousLesPokemons = signal<Pokemon[]>([]);
   protected readonly recherche = signal('');
+  protected readonly erreur = signal<string | null>(null);
 
   protected readonly resultats = computed(() => {
     const terme = this.recherche().toLowerCase().trim();
@@ -27,7 +28,14 @@ export class PokemonList implements OnInit {
 
   ngOnInit(): void {
     this.charger();
-    this.pokemonsService.getAllPokemons().subscribe((data) => this.tousLesPokemons.set(data));
+    this.pokemonsService.getAllPokemons().subscribe({
+      next: (data) => {
+        this.tousLesPokemons.set(data);
+      },
+      error: () => {
+        this.erreur.set('Impossible de charger la liste pour la recherche.');
+      },
+    });
   }
 
   suivant(): void {
@@ -41,9 +49,16 @@ export class PokemonList implements OnInit {
   }
 
   private charger(): void {
+    this.erreur.set(null);
     const offset = (this.page() - 1) * 20;
-    this.pokemonsService.getPokemons(offset).subscribe((data) => {
-      (this.pokemons.set(data.pokemons), this.total.set(data.total));
+    this.pokemonsService.getPokemons(offset).subscribe({
+      next: (data) => {
+        this.pokemons.set(data.pokemons);
+        this.total.set(data.total);
+      },
+      error: () => {
+        this.erreur.set('Impossible de charger les Pokémon. Vérifie ta connexion.');
+      },
     });
   }
 }
